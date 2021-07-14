@@ -1,0 +1,63 @@
+{
+    "name": "finagin/laravel-extra-support",
+    "description": "Extra Support methods for Laravel",
+    "keywords": [
+        "finagin",
+        "laravel-extra-support",
+        "laravel",
+        "support",
+        "helpers"
+    ],
+    "homepage": "https://github.com/finagin/laravel-extra-support",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/finagin/laravel-extra-support/issues",
+        "source": "https://github.com/finagin/laravel-extra-support"
+    },
+    "type": "library",
+    "authors": [
+        {
+            "name": "Igor Finagin",
+            "email": "Igor@Finag.in",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php" : "^7.2.5|^8.0",
+        "illuminate/support": "^6.0|^7.0|^8.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^4.0|^5.0|^6.0",
+        "phpunit/php-code-coverage": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Finagin\\ExtraSupport\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Finagin\\ExtraSupport\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Finagin\\ExtraSupport\\ExtraSupportServiceProvider"
+            ],
+            "aliases": {
+                "MacrosRegistrar": "Finagin\\ExtraSupport\\Facades\\MacrosRegistrar"
+            }
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@composer exec testbench package:discover --ansi"
+        ]
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

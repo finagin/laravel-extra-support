@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+if [ "$1" == "doctoc" ]; then
+    shift 1
+
+    doctoc "$@"
+
+    exit $?;
+fi
+
+cp composer.json "${COMPOSER}"
+
+composer require \
+    illuminate/container:"${LARAVEL_VERSION}" \
+    --ignore-platform-reqs
+
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
+composer exec phpunit "$@"
