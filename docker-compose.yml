@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+    tests:
+        build:
+            context: ./docker
+            dockerfile: Dockerfile
+            args:
+                PHP_VERSION: '${PHP_VERSION:-8.0}'
+                LARAVEL_VERSION: '${LARAVEL_VERSION:-8.0}'
+        image: extra-support/tests
+        volumes:
+            - '.:/app'
+        command: '--verbose'
+
+    readme:
+        build:
+            context: ./docker
+            dockerfile: Dockerfile
+            args:
+                PHP_VERSION: '${PHP_VERSION:-8.0}'
+                LARAVEL_VERSION: '${LARAVEL_VERSION:-8.0}'
+        image: extra-support/readme
+        volumes:
+            - '.:/app'
+        command: 'doctoc --github /app/README.md'

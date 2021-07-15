@@ -1,0 +1,55 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  tests:
+    runs-on: ubuntu-20.04
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [7.2.5, 7.3, 7.4, 8.0]
+        laravel: [^6.0, ^7.0, ^8.0]
+        stability: [prefer-lowest, prefer-stable]
+        include:
+          - php: '8.1'
+            laravel: ^8.0
+            flags: "--ignore-platform-req=php"
+            stability: prefer-stable
+        exclude:
+          - laravel: ^8.0
+            php: 7.2.5
+
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} - ${{ matrix.stability }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: curl, dom, gd, json, libxml, mbstring, zip
+          tools: composer:v2
+          coverage: none
+
+      - name: Setup problem matchers
+        run: |
+            echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+            echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
+      - name: Install dependencies
+        run: |
+          composer require "illuminate/contracts=${{ matrix.laravel }}" --no-interaction --no-update --no-scripts
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress ${{ matrix.flags }} --no-scripts
+          if [ -f "vendor/bin/testbench" ]; then vendor/bin/testbench package:discover --ansi; fi
+
+      - name: Execute tests
+        continue-on-error: ${{ matrix.php > 8 }}
+        run: vendor/bin/phpunit --verbose
